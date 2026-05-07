@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notices — EventHub</title>
+    <link rel="stylesheet" href="notices.css">
+    <style>
+        .notif-bell-wrapper{position:fixed;top:22px;right:30px;z-index:500}
+        .notif-bell-btn{position:relative;background:rgba(255,255,255,.06);border:1px solid rgba(59,130,246,.2);border-radius:50%;width:46px;height:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;transition:all .25s;color:#f0f6ff}
+        .notif-bell-btn:hover{background:rgba(59,130,246,.18);border-color:rgba(59,130,246,.5);transform:scale(1.08)}
+        .notif-count{position:absolute;top:-4px;right:-4px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:20px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid #060a14}
+        .notif-count.visible{display:flex}
+        .notif-panel{position:absolute;top:54px;right:0;width:360px;background:#0d1a34;border:1px solid rgba(59,130,246,.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;max-height:480px;animation:slideDown .25s cubic-bezier(.34,1.56,.64,1)}
+        .notif-panel.open{display:flex}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+        .notif-panel-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid rgba(59,130,246,.12)}
+        .notif-panel-header h3{font-size:14px;font-weight:700;color:#f0f6ff;letter-spacing:.04em}
+        .notif-mark-all{font-size:12px;color:#3b82f6;cursor:pointer;font-weight:600;background:none;border:none;padding:0}
+        .notif-mark-all:hover{color:#60a5fa;text-decoration:underline}
+        .notif-list{overflow-y:auto;max-height:360px}
+        .notif-item{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .18s;display:flex;gap:12px;align-items:flex-start}
+        .notif-item:hover{background:rgba(59,130,246,.08)}
+        .notif-item.unread{background:rgba(59,130,246,.05)}
+        .notif-dot{width:8px;height:8px;border-radius:50%;background:#3b82f6;margin-top:5px;flex-shrink:0}
+        .notif-item.read .notif-dot{background:transparent;border:1px solid rgba(255,255,255,.2)}
+        .notif-item-body{flex:1}
+        .notif-item-title{font-size:13.5px;font-weight:600;color:#e2e8f0;line-height:1.4;margin-bottom:4px}
+        .notif-item.read .notif-item-title{color:#94a3b8;font-weight:500}
+        .notif-item-meta{font-size:11.5px;color:#64748b;display:flex;gap:8px;align-items:center}
+        .notif-cat-badge{padding:1px 8px;border-radius:10px;background:rgba(59,130,246,.15);color:#60a5fa;font-size:10px;font-weight:700;letter-spacing:.04em}
+        .notif-empty{padding:40px 20px;text-align:center;color:#475569}
+        .notif-empty span{font-size:36px;display:block;margin-bottom:10px}
+        .notif-panel-footer{padding:12px 18px;border-top:1px solid rgba(59,130,246,.12);text-align:center}
+        .notif-panel-footer a{font-size:13px;color:#3b82f6;font-weight:600;text-decoration:none}
+        .notif-panel-footer a:hover{color:#60a5fa}
+    </style>
+</head>
+<body>
+<div class="c1">
+
+    
+    <aside class="sidebar menu">
+        <h2>Navigation</h2>
+        <ul>
+            <li><a href="dashboard.html">⭐ Dashboard</a></li>
+            <li class="active"><a href="notices.html">📢 Notices</a></li>
+            <li><a href="profile.html">👤 Profile</a></li>
+            <li><a href="settings.html">⚙️ Settings</a></li>
+            <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+        </ul>
+    </aside>
+
+    
+    <aside class="sidebar categories">
+        <h2>Categories</h2>
+        <ul>
+            <li class="active">All</li>
+            <li>Workshops</li>
+            <li>Seminars</li>
+            <li>Conferences</li>
+            <li>Exams</li>
+            <li>Fees</li>
+            <li>Cultural Events</li>
+            <li>Main Fest</li>
+            <li>Club Activities</li>
+        </ul>
+    </aside>
+
+  
+    <main class="content">
+        <h1>📢 All Notices</h1>
+        <input type="text" id="searchInput" placeholder="🔍 Search notices and events...">
+        <div class="events" id="eventsContainer">
+            <div class="empty-state">
+                <span class="icon">⏳</span>
+                <h3>Loading events...</h3>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<div class="notif-bell-wrapper">
+    <button class="notif-bell-btn" id="notifBellBtn" title="Notifications">
+        🔔
+        <span class="notif-count" id="notifCount">0</span>
+    </button>
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <h3>🔔 Notifications</h3>
+            <button class="notif-mark-all" id="markAllBtn">Mark all read</button>
+        </div>
+        <div class="notif-list" id="notifList">
+            <div class="notif-empty"><span>🔔</span>Loading…</div>
+        </div>
+        <div class="notif-panel-footer">
+            <a href="notices.html">View all notices →</a>
+        </div>
+    </div>
+</div>
+
+<a href="add-event.html" class="upload-icon" title="Post New Notice">+</a>
+
+<div class="toast-container"></div>
+
+<script src="notices.js"></script>
+<script>
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'select-role.html';
+}
+
+
+let _panelOpen = false;
+
+function _esc(str){ const d=document.createElement('div'); d.appendChild(document.createTextNode(str||'')); return d.innerHTML; }
+
+document.getElementById('notifBellBtn').addEventListener('click', function(e){
+    e.stopPropagation();
+    _panelOpen = !_panelOpen;
+    const panel = document.getElementById('notifPanel');
+    if(_panelOpen){ panel.classList.add('open'); _loadNotifList(); }
+    else           panel.classList.remove('open');
+});
+
+document.addEventListener('click', function(e){
+    const wrapper = document.querySelector('.notif-bell-wrapper');
+    if(wrapper && !wrapper.contains(e.target)){
+        document.getElementById('notifPanel').classList.remove('open');
+        _panelOpen = false;
+    }
+});
+
+document.getElementById('markAllBtn').addEventListener('click', _markAllRead);
+
+async function _getEvents(){
+    const token = localStorage.getItem('token');
+    const res   = await fetch('http://localhost:3000/api/events', { headers:{'Authorization':'Bearer '+token} });
+    const data  = await res.json();
+    return data.events || [];
+}
+
+async function _initBadge(){
+    try{
+        const events = await _getEvents();
+        const unread  = events.filter(e => !e.isRead).length;
+        const el      = document.getElementById('notifCount');
+        if(unread>0){ el.textContent = unread>9?'9+':unread; el.classList.add('visible'); }
+        else          el.classList.remove('visible');
+    }catch(e){}
+}
+
+async function _loadNotifList(){
+    const list = document.getElementById('notifList');
+    list.innerHTML = '<div class="notif-empty"><span>⏳</span>Loading...</div>';
+    try{
+        const events = await _getEvents();
+
+        const unread = events.filter(e => !e.isRead).length;
+        const countEl = document.getElementById('notifCount');
+        if(unread>0){ countEl.textContent=unread>9?'9+':unread; countEl.classList.add('visible'); }
+        else          countEl.classList.remove('visible');
+
+        const sorted = [...events].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,15);
+        if(sorted.length===0){ list.innerHTML='<div class="notif-empty"><span>📭</span>No notices yet</div>'; return; }
+
+        list.innerHTML = sorted.map(ev=>{
+            const isRead = ev.isRead === true;
+            const date   = ev.startDate ? new Date(ev.startDate).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '';
+            return `<div class="notif-item ${isRead?'read':'unread'}" data-id="${ev._id}">
+                        <div class="notif-dot"></div>
+                        <div class="notif-item-body">
+                            <div class="notif-item-title">${_esc(ev.title)}</div>
+                            <div class="notif-item-meta">
+                                <span class="notif-cat-badge">${_esc(ev.category||'General')}</span>
+                                <span>${date}</span>
+                            </div>
+                        </div>
+                    </div>`;
+        }).join('');
+
+        list.querySelectorAll('.notif-item').forEach(item=>{
+            item.addEventListener('click', function(){
+                _handleNotifClick(this.dataset.id);
+            });
+        });
+    }catch(err){
+        list.innerHTML='<div class="notif-empty"><span>🔌</span>Cannot connect to server</div>';
+    }
+}
+
+async function _handleNotifClick(eventId){
+    const token = localStorage.getItem('token');
+    try{
+        await fetch('http://localhost:3000/api/events/mark-read/'+eventId, {
+            method:'PATCH', headers:{'Authorization':'Bearer '+token}
+        });
+    }catch(e){}
+    document.getElementById('notifPanel').classList.remove('open');
+    _panelOpen=false;
+    _initBadge();
+    if(typeof fetchEvents==='function') fetchEvents();
+}
+
+async function _markAllRead(){
+    const token = localStorage.getItem('token');
+    try{
+        const events = await _getEvents();
+        await Promise.all(
+            events.filter(e=>!e.isRead).map(e=>
+                fetch('http://localhost:3000/api/events/mark-read/'+e._id,{method:'PATCH',headers:{'Authorization':'Bearer '+token}})
+            )
+        );
+        _loadNotifList();
+        if(typeof fetchEvents==='function') fetchEvents();
+    }catch(e){}
+}
+
+document.addEventListener('DOMContentLoaded', _initBadge);
+</script>
+
+</body>
+</html>

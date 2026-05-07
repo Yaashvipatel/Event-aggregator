@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — EventHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#060a14;--panel:#0e1a2e;--card:#fff;
+--accent:#3b82f6;--accent-glow:rgba(59,130,246,.3);
+--success:#10b981;--danger:#ef4444;--warning:#f59e0b;
+--text:#f0f6ff;--muted:#94a3b8;--border:rgba(59,130,246,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+
+
+.sidebar{width:230px;min-height:100vh;background:#0a1628;border-right:1px solid var(--border);padding:28px 18px;position:sticky;top:0;height:100vh}
+.sidebar h2{font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.sidebar ul{list-style:none}
+.sidebar ul li{margin-bottom:4px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;transition:all .25s;position:relative;overflow:hidden}
+.sidebar ul li a{text-decoration:none;color:var(--muted);display:flex;align-items:center;gap:10px;padding:11px 14px;transition:color .2s}
+.sidebar ul li::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);transform:scaleY(0);border-radius:0 3px 3px 0;transition:transform .2s}
+.sidebar ul li:hover::before,.sidebar ul li.active::before{transform:scaleY(1)}
+.sidebar ul li:hover,.sidebar ul li.active{background:rgba(59,130,246,.1)}
+.sidebar ul li:hover a,.sidebar ul li.active a{color:#fff}
+
+
+.main{flex:1;padding:40px 48px;max-width:820px}
+.main h1{font-size:28px;font-weight:800;margin-bottom:32px;letter-spacing:-.02em}
+
+
+.card{background:#fff;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,.25);color:#0f172a}
+.card-header{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #f1f5f9}
+.card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.card-icon.blue{background:#dbeafe}
+.card-icon.purple{background:#ede9fe}
+.card-icon.red{background:#fee2e2}
+.card-icon.green{background:#dcfce7}
+.card-header h2{font-size:17px;font-weight:700;color:#0f172a}
+.card-header p{font-size:13px;color:#64748b;margin-top:2px}
+
+
+.profile-summary{display:flex;align-items:center;gap:18px}
+.avatar-sm{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0}
+.profile-info h3{font-size:16px;font-weight:700;color:#0f172a}
+.profile-info p{font-size:13px;color:#64748b;margin-top:3px}
+.role-pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:6px;background:#dbeafe;color:#1e40af}
+
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:12.5px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em}
+.form-group input,.form-group select{padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;background:#f8fafc;color:#0f172a;outline:none;transition:all .2s;width:100%}
+.form-group input:focus,.form-group select:focus{border-color:#3b82f6;background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.form-group input.error-field{border-color:#ef4444;background:#fff5f5}
+
+
+.btn{padding:11px 22px;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;transition:all .25s;letter-spacing:.01em}
+.btn-primary{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.5)}
+.btn-danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff}
+.btn-danger:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(239,68,68,.5)}
+.btn-ghost{background:#f1f5f9;color:#475569}
+.btn-ghost:hover{background:#e2e8f0}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none !important}
+
+
+.pass-wrap{position:relative}
+.pass-wrap input{padding-right:56px}
+.pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:13px;color:#64748b;font-weight:600;font-family:'Outfit',sans-serif}
+
+.msg{padding:10px 14px;border-radius:9px;font-size:13.5px;font-weight:600;margin-top:12px;display:none}
+.msg.success{background:#dcfce7;color:#15803d;border:1px solid #4ade80;display:block}
+.msg.error  {background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;display:block}
+
+.divider{height:1px;background:#f1f5f9;margin:20px 0}
+
+.danger-zone{border:1.5px solid #fca5a5 !important}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:16px}
+
+#globalToast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;color:#fff;box-shadow:0 8px 25px rgba(0,0,0,.3);z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap}
+#globalToast.show{opacity:1}
+#globalToast.success{background:linear-gradient(135deg,#059669,#10b981)}
+#globalToast.error  {background:linear-gradient(135deg,#dc2626,#ef4444)}
+#globalToast.info   {background:linear-gradient(135deg,#2563eb,#3b82f6)}
+#globalToast.warning{background:linear-gradient(135deg,#d97706,#f59e0b)}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <h2>Navigation</h2>
+    <ul>
+        <li><a href="dashboard.html">⭐ Dashboard</a></li>
+        <li><a href="notices.html">📢 Notices</a></li>
+        <li><a href="profile.html">👤 Profile</a></li>
+        <li class="active"><a href="settings.html">⚙️ Settings</a></li>
+        <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+    </ul>
+</aside>
+
+<main class="main">
+    <h1>⚙️ Settings</h1>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon blue">👤</div>
+            <div><h2>Account Overview</h2><p>Your current account details</p></div>
+        </div>
+        <div class="profile-summary">
+            <div class="avatar-sm" id="avatarInitial">?</div>
+            <div class="profile-info">
+                <h3 id="dispName">Loading...</h3>
+                <p id="dispEmail"></p>
+                <span class="role-pill" id="dispRole">—</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon blue">✏️</div>
+            <div><h2>Edit Profile</h2><p>Update your name and phone number</p></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="editName" placeholder="Your full name">
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="editPhone" placeholder="+91 XXXXX XXXXX">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="editEmail" placeholder="Email address" style="background:#f8fafc;color:#64748b" readonly>
+            </div>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="updateProfile()">💾 Save Changes</button>
+        </div>
+        <div id="profileMsg" class="msg"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon purple">🔐</div>
+            <div><h2>Change Password</h2><p>Keep your account secure</p></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Current Password</label>
+                <div class="pass-wrap">
+                    <input type="password" id="oldPass" placeholder="Current password">
+                    <button class="pass-toggle" type="button" onclick="togglePwd('oldPass',this)">Show</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <div class="pass-wrap">
+                    <input type="password" id="newPass" placeholder="New password (min 6 chars)">
+                    <button class="pass-toggle" type="button" onclick="togglePwd('newPass',this)">Show</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <div class="pass-wrap">
+                    <input type="password" id="confirmPass" placeholder="Confirm new password">
+                    <button class="pass-toggle" type="button" onclick="togglePwd('confirmPass',this)">Show</button>
+                </div>
+            </div>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="changePassword()">🔑 Update Password</button>
+        </div>
+        <div id="passMsg" class="msg"></div>
+    </div>
+
+    <div class="card danger-zone">
+        <div class="card-header">
+            <div class="card-icon red">🚪</div>
+            <div><h2>Session</h2><p>Log out from your account</p></div>
+        </div>
+        <p style="font-size:14px;color:#64748b;margin-bottom:16px;">You will be redirected to the login page after logging out.</p>
+        <button class="btn btn-danger" onclick="logout()">🚪 Logout Now</button>
+    </div>
+</main>
+
+<div id="globalToast"></div>
+
+<script>
+const API = 'http://localhost:3000';
+let currentUser = null;
+
+function toast(msg, type = 'info') {
+    const t = document.getElementById('globalToast');
+    t.textContent = msg;
+    t.className = 'show ' + type;
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.className = '', 3500);
+}
+
+function showMsg(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'msg ' + type;
+    setTimeout(() => el.className = 'msg', 4000);
+}
+
+function togglePwd(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+    else { inp.type = 'password'; btn.textContent = 'Show'; }
+}
+
+async function loadUser() {
+    const token = localStorage.getItem('token');
+    if (!token) { window.location.href = 'select-role.html'; return; }
+
+    try {
+        const res = await fetch(API + '/api/users/me', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (!res.ok) {
+            const cached = JSON.parse(localStorage.getItem('user') || 'null');
+            if (cached) { currentUser = cached; renderUser(cached); return; }
+            throw new Error('Unauthorized');
+        }
+
+        const user = await res.json();
+        currentUser = user;
+        localStorage.setItem('user', JSON.stringify(user));
+        renderUser(user);
+
+    } catch(err) {
+        console.error(err);
+        const cached = JSON.parse(localStorage.getItem('user') || 'null');
+        if (cached) { currentUser = cached; renderUser(cached); toast('Showing cached data (offline)', 'warning'); }
+        else { toast('Session expired. Please login again.', 'error'); setTimeout(() => window.location.href = 'select-role.html', 2000); }
+    }
+}
+
+function renderUser(user) {
+    document.getElementById('dispName').textContent  = user.name  || 'Unknown';
+    document.getElementById('dispEmail').textContent = user.email || '';
+    document.getElementById('dispRole').textContent  = (user.role || 'student').charAt(0).toUpperCase() + (user.role || 'student').slice(1);
+    document.getElementById('avatarInitial').textContent = (user.name || '?').charAt(0).toUpperCase();
+    document.getElementById('editName').value  = user.name  || '';
+    document.getElementById('editPhone').value = user.phone || '';
+    document.getElementById('editEmail').value = user.email || '';
+}
+
+// Update profile
+async function updateProfile() {
+    const token = localStorage.getItem('token');
+    const name  = document.getElementById('editName').value.trim();
+    const phone = document.getElementById('editPhone').value.trim();
+
+    if (!name) { showMsg('profileMsg', 'Name cannot be empty!', 'error'); return; }
+
+    try {
+        const res = await fetch(API + '/api/users/update', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ name, phone })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            currentUser = data.user || { ...currentUser, name, phone };
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            renderUser(currentUser);
+            showMsg('profileMsg', '✅ Profile updated successfully!', 'success');
+            toast('Profile updated!', 'success');
+        } else {
+            showMsg('profileMsg', data.message || 'Update failed', 'error');
+        }
+    } catch(err) {
+        console.error(err);
+        showMsg('profileMsg', 'Cannot connect to server', 'error');
+    }
+}
+
+async function changePassword() {
+    const token      = localStorage.getItem('token');
+    const oldPass    = document.getElementById('oldPass').value;
+    const newPass    = document.getElementById('newPass').value;
+    const confirmPass= document.getElementById('confirmPass').value;
+
+    if (!oldPass || !newPass || !confirmPass) { showMsg('passMsg', 'Please fill all password fields', 'error'); return; }
+    if (newPass !== confirmPass) { showMsg('passMsg', '❌ New passwords do not match!', 'error'); return; }
+    if (newPass.length < 6)     { showMsg('passMsg', '❌ Password must be at least 6 characters', 'error'); return; }
+
+    try {
+        const res = await fetch(API + '/api/users/change-password', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            document.getElementById('oldPass').value     = '';
+            document.getElementById('newPass').value     = '';
+            document.getElementById('confirmPass').value = '';
+            showMsg('passMsg', '🔐 Password changed successfully!', 'success');
+            toast('Password updated!', 'success');
+        } else {
+            showMsg('passMsg', data.message || 'Password change failed', 'error');
+        }
+    } catch(err) {
+        console.error(err);
+        showMsg('passMsg', 'Cannot connect to server', 'error');
+    }
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'select-role.html';
+}
+
+loadUser();
+</script>
+</body>
+</html>

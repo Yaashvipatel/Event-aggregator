@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Profile - Event Aggregator</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+<div class="c1">
+
+    <aside class="sidebar menu">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="notices.html">Notices</a></li>
+            <li><a href="add-event.html">Create Event</a></li>
+            <li class="active"><a href="faculty-profile.html">Profile</a></li>
+            <li><a href="settings.html">Settings</a></li>
+            <li class="logout-item"><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+
+        <h1>Faculty Profile</h1>
+
+        <div class="profile-header-card">
+            <div class="profile-top-banner faculty-banner"></div>
+            <div class="profile-header-body">
+                <div class="avatar-wrapper">
+                    <div class="avatar faculty-avatar" id="profileAvatar">P</div>
+                    <label for="avatarInput" class="avatar-edit" title="Change Photo">📷</label>
+                    <input type="file" id="avatarInput" accept="image/*" hidden>
+                </div>
+                <div class="profile-header-info">
+                    <h2 id="displayName">Dr. Priya Sharma</h2>
+                    <span class="role-badge faculty-badge">Faculty / Club Admin</span>
+                    <p class="profile-email" id="displayEmail">priya.sharma@geu.ac.in</p>
+                    <p class="profile-id" id="displayId">ID: FAC2023015</p>
+                </div>
+                <div class="profile-header-actions">
+                    <button class="btn faculty-btn" id="editBtn" onclick="enableEdit()">✏️ Edit Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab(event, 'personal')">Personal Info</button>
+            <button class="tab-btn" onclick="switchTab(event, 'professional')">Professional</button>
+            <button class="tab-btn" onclick="switchTab(event, 'clubs')">Clubs Managed</button>
+            <button class="tab-btn" onclick="switchTab(event, 'notifications')">Notifications</button>
+            <button class="tab-btn" onclick="switchTab(event, 'security')">Security</button>
+        </div>
+
+        <div class="tab-content active" id="tab-personal">
+            <div class="event-card">
+                <div class="event-top">
+                    <h3>👤 Personal Information</h3>
+                </div>
+                <form id="personalForm" onsubmit="saveFacultyProfile(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="name" placeholder="Enter your name" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" placeholder="Email address" disabled class="locked-field">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Faculty ID</label>
+                            <input type="text" id="facultyId" placeholder="e.g. FAC2023015" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Bio</label>
+                        <textarea id="bio" placeholder="Brief introduction about yourself..." disabled></textarea>
+                    </div>
+                    <div class="form-actions hidden" id="personalActions">
+                        <button type="submit" class="btn faculty-btn">💾 Save Changes</button>
+                        <button type="button" class="btn secondary" onclick="cancelEdit()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-professional">
+            <div class="event-card">
+                <div class="event-top">
+                    <h3>🏫 Professional Information</h3>
+                </div>
+                <form onsubmit="saveFacultyProfile(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Designation</label>
+                            <select id="designation" disabled>
+                                <option value="">Select Designation</option>
+                                <option value="Assistant Professor">Assistant Professor</option>
+                                <option value="Associate Professor">Associate Professor</option>
+                                <option value="Professor">Professor</option>
+                                <option value="HOD">Head of Department</option>
+                                <option value="Lab Assistant">Lab Assistant</option>
+                                <option value="Club President">Club President</option>
+                                <option value="Club Secretary">Club Secretary</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select id="facultyDepartment" disabled>
+                                <option value="">Select Department</option>
+                                <option value="CSE">Computer Science & Engineering</option>
+                                <option value="ECE">Electronics & Communication</option>
+                                <option value="ME">Mechanical Engineering</option>
+                                <option value="CE">Civil Engineering</option>
+                                <option value="EEE">Electrical Engineering</option>
+                                <option value="IT">Information Technology</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Office Location</label>
+                            <input type="text" id="officeLocation" placeholder="e.g. Room 301, Block A" disabled>
+                        </div>
+                    </div>
+                    <div class="form-actions hidden" id="professionalActions">
+                        <button type="submit" class="btn faculty-btn">💾 Save Changes</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="event-card">
+                <div class="event-top">
+                    <h3>📚 Subjects Handled</h3>
+                </div>
+                <div class="tags-box" id="subjectTags"></div>
+                <div class="tag-add-row hidden" id="subjectAddRow">
+                    <input type="text" id="newSubject" placeholder="Add subject (e.g. Data Structures)">
+                    <button class="btn small faculty-btn" onclick="addSubject()">+ Add</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-clubs">
+            <div class="event-card">
+                <div class="event-top">
+                    <h3>🏛️ Clubs You Manage</h3>
+                </div>
+                <div class="clubs-list" id="clubsManagedList">
+                   
+                </div>
+
+                <div class="add-club-form hidden" id="addClubForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Club Name</label>
+                            <input type="text" id="newClubName" placeholder="e.g. Coding Club">
+                        </div>
+                        <div class="form-group">
+                            <label>Your Role</label>
+                            <select id="newClubRole">
+                                <option value="Advisor">Advisor</option>
+                                <option value="President">President</option>
+                                <option value="Coordinator">Coordinator</option>
+                                <option value="Secretary">Secretary</option>
+                                <option value="Mentor">Mentor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn small faculty-btn" onclick="addManagedClub()">✓ Add Club</button>
+                </div>
+
+                <button class="btn secondary small" style="margin-top: 12px;" id="toggleAddClubBtn" onclick="toggleAddClub()">+ Add New Club</button>
+            </div>
+
+            <div class="form-actions hidden" id="clubActions">
+                <button class="btn faculty-btn" onclick="saveFacultyProfile(event)">💾 Save All Changes</button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-notifications">
+            <div class="event-card">
+                <div class="event-top">
+                    <h3>🔔 Notification Preferences</h3>
+                </div>
+                <p class="event-desc">Choose which event types you want to be notified about.</p>
+                <div class="notif-list">
+                    <div class="notif-item">
+                        <label for="notifAssignments">📝 Assignments</label>
+                        <label class="switch">
+                            <input type="checkbox" id="notifAssignments" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="notif-item">
+                        <label for="notifExams">📋 Exams</label>
+                        <label class="switch">
+                            <input type="checkbox" id="notifExams" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="notif-item">
+                        <label for="notifNotices">📢 Notices</label>
+                        <label class="switch">
+                            <input type="checkbox" id="notifNotices" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="notif-item">
+                        <label for="notifClubs">🏛️ Club Activities</label>
+                        <label class="switch">
+                            <input type="checkbox" id="notifClubs" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="notif-item">
+                        <label for="notifWorkshops">🎯 Workshops & Seminars</label>
+                        <label class="switch">
+                            <input type="checkbox" id="notifWorkshops" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn faculty-btn" onclick="saveNotifPrefs()">💾 Save Preferences</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-security">
+            <div class="event-card">
+                <div class="event-top">
+                    <h3>🔒 Change Password</h3>
+                </div>
+                <form onsubmit="changePassword(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <div class="password-box">
+                                <input type="password" id="currentPass" placeholder="Current password" required>
+                                <span onclick="togglePass('currentPass', this)">Show</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <div class="password-box">
+                                <input type="password" id="newPass" placeholder="New password" required minlength="6">
+                                <span onclick="togglePass('newPass', this)">Show</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <div class="password-box">
+                                <input type="password" id="confirmPass" placeholder="Confirm password" required>
+                                <span onclick="togglePass('confirmPass', this)">Show</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn faculty-btn">🔐 Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="profile.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        currentRole = 'faculty';
+        loadProfile();
+    });
+</script>
+</body>
+</html>

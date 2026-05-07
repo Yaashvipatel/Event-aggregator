@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Role - Event Aggregator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: radial-gradient(circle at 20% 20%, #60a5fa55, transparent 40%),
+                        radial-gradient(circle at 80% 80%, #3b82f655, transparent 40%),
+                        linear-gradient(135deg, #020617, #1e3a8a, #2563eb);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .role-container {
+            background: #ffffff;
+            padding: 40px 30px;
+            width: 420px;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .role-container h2 {
+            color: #1e3a8a;
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .role-container p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .role-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .role-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            background: #ffffff;
+        }
+
+        .role-card:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+
+        .role-card.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .role-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .role-icon.student-icon { background: rgba(37, 99, 235, 0.1); }
+        .role-icon.faculty-icon { background: rgba(5, 150, 105, 0.1); }
+        .role-icon.admin-icon { background: rgba(220, 38, 38, 0.1); }
+
+        .role-info h3 {
+            font-size: 16px;
+            color: #1e293b;
+            margin-bottom: 3px;
+        }
+
+        .role-info p {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.2s;
+        }
+
+        .continue-btn:hover { background: #1d4ed8; }
+        .continue-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+        .bottom-text {
+            margin-top: 18px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .bottom-text a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .bottom-text a:hover { text-decoration: underline; }
+
+        .role-card .checkmark {
+            margin-left: auto;
+            font-size: 20px;
+            color: #2563eb;
+            display: none;
+        }
+
+        .role-card.selected .checkmark { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .role-container { width: 92%; padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="role-container">
+
+    <h2>📅 EventHub</h2>
+    <p>Welcome! Select your role to continue.</p>
+
+    <div class="role-cards">
+
+    <div class="role-card" onclick="selectRole('student', this)">
+        <div class="role-icon student-icon">🎓</div>
+        <div class="role-info">
+            <h3>Student</h3>
+            <p>View events, get notifications, track deadlines</p>
+        </div>
+        <span class="checkmark">✔</span>
+    </div>
+
+    <div class="role-card" onclick="selectRole('faculty', this)">
+            <div class="role-icon faculty-icon">👨‍🏫</div>
+            <div class="role-info">
+                <h3>Faculty / Club Admin</h3>
+                <p>Create events, manage clubs, post notices</p>
+            </div>
+            <span class="checkmark">✔</span>
+        </div>
+
+       
+        <div class="role-card" onclick="selectRole('admin', this)">
+            <div class="role-icon admin-icon">🛡️</div>
+            <div class="role-info">
+                <h3>System Admin</h3>
+                <p>Manage users, monitor platform, control roles</p>
+            </div>
+            <span class="checkmark">✔</span>
+        </div>
+
+    </div>
+
+    <button class="continue-btn" id="continueBtn" disabled onclick="goToLogin()">
+        Select a role to continue →
+    </button>
+
+    <p class="bottom-text">
+        Don't have an account? <a href="role-signup.html">Sign Up</a>
+    </p>
+
+</div>
+
+<script>
+
+    function seedDemoAccounts() {
+        if (localStorage.getItem('demoSeeded')) return;
+
+        var student1 = {
+            name: "Rahul Verma",
+            email: "rahul.verma@geu.ac.in",
+            password: "rahul123",
+            role: "student",
+            phone: "+91 76543 21000",
+            bio: "CSE student passionate about web development and AI.",
+            studentId: "2023CS042",
+            department: "CSE",
+            year: "3",
+            semester: "5",
+            section: "A",
+            interests: ["Web Development", "Machine Learning", "Open Source", "Competitive Programming"],
+            clubsJoined: ["Coding Club", "AI/ML Society", "Photography Club"],
+            clubsManaged: [],
+            subjectsHandled: [],
+            isActive: true,
+            notifPrefs: { assignments: true, exams: true, notices: true, clubs: true, workshops: false }
+        };
+
+        var student2 = {
+            name: "Sneha Gupta",
+            email: "sneha.gupta@geu.ac.in",
+            password: "sneha123",
+            role: "student",
+            phone: "+91 98123 45678",
+            bio: "ECE student interested in IoT and embedded systems.",
+            studentId: "2023EC018",
+            department: "ECE",
+            year: "2",
+            semester: "4",
+            section: "B",
+            interests: ["IoT", "Embedded Systems", "Robotics"],
+            clubsJoined: ["Robotics Club", "IEEE Student Chapter"],
+            clubsManaged: [],
+            subjectsHandled: [],
+            isActive: true,
+            notifPrefs: { assignments: true, exams: true, notices: true, clubs: true, workshops: true }
+        };
+
+        var student3 = {
+            name: "Amit Patel",
+            email: "amit.patel@geu.ac.in",
+            password: "amit123",
+            role: "student",
+            phone: "+91 88776 65544",
+            bio: "IT student, love hackathons and open source contributions.",
+            studentId: "2023IT035",
+            department: "IT",
+            year: "3",
+            semester: "6",
+            section: "A",
+            interests: ["Hackathons", "Cloud Computing", "DevOps"],
+            clubsJoined: ["Google DSC", "Coding Club"],
+            clubsManaged: [],
+            subjectsHandled: [],
+            isActive: true,
+            notifPrefs: { assignments: true, exams: true, notices: true, clubs: false, workshops: true }
+        };
+
+        var faculty1 = {
+            name: "Dr. Priya Sharma",
+            email: "priya.sharma@geu.ac.in",
+            password: "priya123",
+            role: "faculty",
+            phone: "+91 87654 32100",
+            bio: "Assistant Professor with 8 years of experience in Computer Science.",
+            facultyId: "FAC2023015",
+            designation: "Assistant Professor",
+            facultyDepartment: "CSE",
+            officeLocation: "Room 301, Block A",
+            subjectsHandled: ["Data Structures", "Algorithms", "Database Systems"],
+            clubsManaged: [
+                { clubName: "Coding Club", role: "Advisor" },
+                { clubName: "AI/ML Society", role: "Mentor" }
+            ],
+            interests: [],
+            clubsJoined: [],
+            isActive: true,
+            notifPrefs: { assignments: true, exams: true, notices: true, clubs: true, workshops: false }
+        };
+
+        var faculty2 = {
+            name: "Prof. Rajan Gupta",
+            email: "rajan.gupta@geu.ac.in",
+            password: "rajan123",
+            role: "faculty",
+            phone: "+91 99887 76655",
+            bio: "Professor of Electronics and Communication. 15+ years teaching experience.",
+            facultyId: "FAC2023007",
+            designation: "Professor",
+            facultyDepartment: "ECE",
+            officeLocation: "Room 205, Block B",
+            subjectsHandled: ["Digital Electronics", "Signal Processing", "VLSI Design"],
+            clubsManaged: [
+                { clubName: "Robotics Club", role: "Advisor" }
+            ],
+            interests: [],
+            clubsJoined: [],
+            isActive: true,
+            notifPrefs: { assignments: true, exams: true, notices: true, clubs: false, workshops: true }
+        };
+
+        var admin1 = {
+            name: "Admin Kumar",
+            email: "admin@geu.ac.in",
+            password: "admin123",
+            role: "admin",
+            phone: "+91 98765 43210",
+            bio: "System administrator managing the EventHub platform.",
+            adminId: "ADM001",
+            adminDepartment: "IT Administration",
+            interests: [],
+            clubsJoined: [],
+            clubsManaged: [],
+            subjectsHandled: [],
+            isActive: true,
+            permissions: ["manage_users", "manage_events", "manage_roles", "view_analytics"],
+            notifPrefs: { assignments: true, exams: true, notices: true, clubs: true, workshops: true }
+        };
+
+        localStorage.setItem("2023CS042", JSON.stringify(student1));
+        localStorage.setItem("2023EC018", JSON.stringify(student2));
+        localStorage.setItem("2023IT035", JSON.stringify(student3));
+        localStorage.setItem("FAC2023015", JSON.stringify(faculty1));
+        localStorage.setItem("FAC2023007", JSON.stringify(faculty2));
+        localStorage.setItem("ADM001", JSON.stringify(admin1));
+
+        localStorage.setItem('demoSeeded', 'true');
+    }
+
+    seedDemoAccounts();
+
+ 
+    var selectedRole = '';
+
+    function selectRole(role, cardEl) {
+        selectedRole = role;
+
+        var cards = document.querySelectorAll('.role-card');
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].classList.remove('selected');
+        }
+
+        cardEl.classList.add('selected');
+
+        var btn = document.getElementById('continueBtn');
+        btn.disabled = false;
+
+        if (role === 'student') {
+            btn.textContent = 'Continue as Student →';
+        } else if (role === 'faculty') {
+            btn.textContent = 'Continue as Faculty →';
+        } else if (role === 'admin') {
+            btn.textContent = 'Continue as Admin →';
+        }
+    }
+
+    function goToLogin() {
+        if (!selectedRole) return;
+        localStorage.setItem('selectedRole', selectedRole);
+        window.location.href = 'role-login.html';
+    }
+</script>
+
+</body>
+</html>

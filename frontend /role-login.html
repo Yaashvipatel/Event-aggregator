@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Event Aggregator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: radial-gradient(circle at 20% 20%, #60a5fa55, transparent 40%),
+                        radial-gradient(circle at 80% 80%, #3b82f655, transparent 40%),
+                        linear-gradient(135deg, #020617, #1e3a8a, #2563eb);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: #ffffff;
+            padding: 35px 30px;
+            width: 380px;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .login-container h2 {
+            color: #1e3a8a;
+            margin-bottom: 5px;
+            font-size: 20px;
+        }
+
+        .role-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 18px;
+        }
+
+        .role-indicator.student { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+        .role-indicator.faculty { background: rgba(5, 150, 105, 0.1); color: #059669; }
+        .role-indicator.admin { background: rgba(220, 38, 38, 0.1); color: #dc2626; }
+
+        .id-label {
+            text-align: left;
+            font-size: 13px;
+            font-weight: bold;
+            color: #374151;
+            margin-top: 8px;
+            margin-bottom: 3px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 11px 12px;
+            margin: 4px 0 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .login-container input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+        }
+
+        .password-box {
+            position: relative;
+        }
+
+        .password-box input {
+            padding-right: 50px;
+        }
+
+        .password-box span {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 13px;
+            color: #2563eb;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 11px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #ffffff;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .login-btn.student-btn { background: #2563eb; }
+        .login-btn.student-btn:hover { background: #1d4ed8; }
+        .login-btn.faculty-btn { background: #059669; }
+        .login-btn.faculty-btn:hover { background: #047857; }
+        .login-btn.admin-btn { background: #dc2626; }
+        .login-btn.admin-btn:hover { background: #b91c1c; }
+
+        .message {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .success { color: green; }
+        .error { color: red; }
+
+        .bottom-links {
+            margin-top: 18px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .bottom-links a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .bottom-links a:hover { text-decoration: underline; }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #f9fafb;
+            color: #6b7280;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover { background: #f3f4f6; color: #1e293b; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container { width: 92%; padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+
+    <a href="select-role.html" class="back-btn">← Change Role</a>
+
+    <h2>📅 EventHub Login</h2>
+
+    <div class="role-indicator" id="roleIndicator"></div>
+
+    <form id="roleLoginForm">
+
+        <p class="id-label" id="idLabel">ID</p>
+        <input type="text" id="loginId" placeholder="Enter your ID" required>
+
+        <p class="id-label">Password</p>
+        <div class="password-box">
+            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+            <span onclick="togglePassword()">Show</span>
+        </div>
+
+        <button type="submit" class="login-btn" id="loginBtn">Login →</button>
+
+        <p id="loginMessage" class="message"></p>
+    </form>
+
+    <div class="bottom-links">
+        <p>Don't have an account? <a href="role-signup.html">Sign Up</a></p>
+        <p style="margin-top: 6px;"><a href="select-role.html">← Back to Role Selection</a></p>
+    </div>
+
+</div>
+
+<script>            
+document.addEventListener("DOMContentLoaded", function () {
+    const loginBtn = document.getElementById("loginBtn");
+    const roleIndicator = document.getElementById("roleIndicator");
+    const loginForm = document.getElementById('roleLoginForm');
+    const message = document.getElementById('loginMessage');
+
+    const role = localStorage.getItem("selectedRole") || "student"; // Default to student if null
+    
+    loginBtn.classList.remove("student-btn", "faculty-btn", "admin-btn");
+    
+    const roleConfig = {
+        student: { class: "student", text: "Student Login", btn: "student-btn" },
+        faculty: { class: "faculty", text: "Faculty Login", btn: "faculty-btn" },
+        admin: { class: "admin", text: "Admin Login", btn: "admin-btn" }
+    };
+
+    const config = roleConfig[role] || roleConfig.student;
+    loginBtn.classList.add(config.btn);
+    roleIndicator.textContent = config.text;
+    roleIndicator.className = `role-indicator ${config.class}`;
+
+    loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('loginId').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        loginBtn.disabled = true;
+        loginBtn.innerText = "Authenticating...";
+
+        try {
+            const res = await fetch("http://localhost:3000/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, password })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.token) {
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem("role", data.user.role);
+
+                message.textContent = `✅ Welcome, ${data.user.name}!`;
+                message.className = "message success";
+
+                setTimeout(() => {
+                    window.location.href = 'notices.html';
+                }, 1000);
+            } else {
+                throw new Error(data.message || "Invalid credentials");
+            }
+        } catch (error) {
+            message.textContent = error.message;
+            message.className = "message error";
+            loginBtn.disabled = false;
+            loginBtn.innerText = "Login →";
+        }
+    });
+});
+
+function togglePassword() {
+    const passInput = document.getElementById('loginPassword');
+    const toggleText = document.querySelector('.password-box span');
+    
+    if (passInput.type === "password") {
+        passInput.type = "text";
+        toggleText.innerText = "Hide";
+    } else {
+        passInput.type = "password";
+        toggleText.innerText = "Show";
+    }
+}
+</script>
+
+</body>
+</html>
