@@ -1,0 +1,10 @@
+npm create vite@latest event-aggregator-frontend
+
+
+npm intit-y 
+
+npm install express mongoose cors dotenv jsonwebtoken bcryptjs
+
+
+npm install --save-dev nodemon
+
