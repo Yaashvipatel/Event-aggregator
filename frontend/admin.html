@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="notices.css">
+</head>
+<body>
+    <div class="c1">
+        <aside class="sidebar menu">
+            <h2>Menu</h2>
+            <div id="navUser" class="nav-user"></div>
+            <ul>
+                <li data-nav="home"><a href="notices.html">Home</a></li>
+                <li data-nav="profile"><a href="profile.html">Profile</a></li>
+                <li data-nav="admin"><a href="admin.html">Admin Panel</a></li>
+                <li><a href="#" id="logoutLink">Logout</a></li>
+            </ul>
+            <div class="live-status"><span id="liveDot" class="dot off"></span><span id="liveText">Connecting...</span></div>
+        </aside>
+        <main class="content">
+            <h1>Admin Panel</h1>
+            <div class="stats">
+                <div class="stat"><b id="sOnline">-</b><span>Online now</span></div>
+                <div class="stat"><b id="sStudent">-</b><span>Students</span></div>
+                <div class="stat"><b id="sOrganizer">-</b><span>Organizers</span></div>
+                <div class="stat"><b id="sAdmin">-</b><span>Admins</span></div>
+            </div>
+            <div class="panel" style="max-width:none">
+                <h2>Users &amp; roles</h2>
+                <div class="filters">
+                    <input type="text" id="searchInput" placeholder="Search by name or student ID...">
+                    <select id="roleFilter">
+                        <option value="">All roles</option>
+                        <option value="student">Student</option>
+                        <option value="organizer">Organizer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div id="userTable"><p class="muted">Loading...</p></div>
+                <p class="muted" id="pager"></p>
+            </div>
+        </main>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

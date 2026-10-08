@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="notices.css">
+</head>
+<body>
+    <div class="c1">
+        <aside class="sidebar menu">
+            <h2>Menu</h2>
+            <div id="navUser" class="nav-user"></div>
+            <ul>
+                <li data-nav="home"><a href="notices.html">Home</a></li>
+                <li data-nav="profile"><a href="profile.html">Profile</a></li>
+                <li data-nav="admin" data-admin-only style="display:none"><a href="admin.html">Admin Panel</a></li>
+                <li><a href="#" id="logoutLink">Logout</a></li>
+            </ul>
+            <div class="live-status"><span id="liveDot" class="dot off"></span><span id="liveText">Connecting...</span></div>
+        </aside>
+        <main class="content">
+            <h1>My Profile</h1>
+
+            <div class="panel">
+                <h2>Details &amp; interests</h2>
+                <p class="muted">Student ID: <strong id="pSid"></strong></p>
+                <label for="pName">Full name</label>
+                <input type="text" id="pName" maxlength="80">
+                <label>Interests (drive your "For You" recommendations)</label>
+                <div id="pChips" class="chips"></div>
+                <button class="btn" id="saveProfile">Save</button>
+            </div>
+
+            <div class="panel">
+                <h2>My registrations</h2>
+                <div id="myRsvps"><p class="muted">Loading...</p></div>
+            </div>
+
+            <div class="panel">
+                <h2>Change password</h2>
+                <label for="curPw">Current password</label>
+                <input type="password" id="curPw" autocomplete="current-password">
+                <label for="newPw">New password (min 6 characters)</label>
+                <input type="password" id="newPw" autocomplete="new-password">
+                <p></p><button class="btn secondary" id="savePw">Update password</button>
+            </div>
+        </main>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

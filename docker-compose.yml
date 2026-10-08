@@ -1,0 +1,22 @@
+# docker compose up --build   ->  http://localhost:3000
+services:
+  mongo:
+    image: mongo:7
+    volumes: [mongo-data:/data/db]
+  recommender:
+    build: ./recommender
+  app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports: ["3000:3000"]
+    environment:
+      MONGO_URI: mongodb://mongo:27017/campus_events
+      RECOMMENDER_URL: http://recommender:5001
+      JWT_SECRET: change-me-in-real-deployments
+      AUTO_SEED: "true"
+    volumes: [uploads:/app/backend/uploads]
+    depends_on: [mongo, recommender]
+volumes:
+  mongo-data:
+  uploads:

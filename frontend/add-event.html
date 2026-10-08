@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Event</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+ background: radial-gradient(circle at 20% 20%, #60a5fa55, transparent 40%),
+              radial-gradient(circle at 80% 80%, #3b82f655, transparent 40%),
+              linear-gradient(135deg, #020617, #1e3a8a, #2563eb);
+  background-attachment: fixed;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: glowMove 12s ease infinite alternate;
+}
+
+.container {
+  background: rgb(255, 255, 255);
+  width: 90%;
+  max-width: 1000px;
+  height: 90vh;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.4s ease-in-out;
+  overflow-y: auto;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1e3a8a;
+}
+
+.content {
+  display: flex;
+  gap: 30px;
+  flex: 1;
+  flex-direction: column;
+}
+
+.left {
+  flex: 1;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  resize: vertical;
+  overflow-y: auto;
+}
+
+.upload-box {
+  border: 2px outset #3b82f6;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  color: #1e40af;
+  font-size: 14px;
+  margin-top: 10px;
+  width: fit-content;
+  display: inline-block;
+  transition: 0.2s;
+}
+
+.upload-box:hover {
+  background: #eff6ff;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.preview-item {
+  position: relative;
+}
+
+.preview-item img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: red;
+  cursor: pointer;
+}
+
+input[type="date"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #6f6f73;
+  margin-top: 8px;
+}
+
+.next-btn, .submit-btn { 
+  border: 2px outset #3b82f6;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  color: #1e40af;
+  font-size: 14px;
+  width: fit-content; 
+  transition: 0.2s; 
+  background: white;
+}
+
+.hidden { display: none; }
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+@keyframes glowMove {
+  0% { background-position: 0% 0%, 100% 100%, 0% 50%; }
+  100% { background-position: 30% 30%, 70% 70%, 100% 50%; }
+}
+
+input[type="text"], input[type="datetime-local"], input[type="number"], select {
+  width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #6f6f73; margin: 6px 0 12px; font-size: 15px;
+}
+label { font-size: 13px; color: #475569; }
+.type-toggle { display: flex; gap: 10px; margin-bottom: 14px; }
+.type-toggle label { display: flex; align-items: center; gap: 6px; font-size: 15px; color: #1e3a8a; cursor: pointer; }
+.error-msg { color: #dc2626; font-size: 14px; margin-top: 10px; min-height: 18px; }
+.next-btn:hover, .submit-btn:hover { background: #eff6ff; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h2 id="pageTitle">&#127882; Post Event</h2>
+
+<!-- STEP 1 -->
+<div id="step1" class="content">
+<div class="left">
+
+  <div class="type-toggle" id="typeToggle">
+    <label><input type="radio" name="kind" value="event" checked> Event (RSVP, dates)</label>
+    <label><input type="radio" name="kind" value="notice"> Notice (announcement)</label>
+  </div>
+
+  <label for="title">Title</label>
+  <input type="text" id="title" maxlength="120" placeholder="e.g. Python Workshop">
+
+  <label for="category">Category</label>
+  <select id="category">
+    <option value="workshop">Workshops</option>
+    <option value="seminar">Seminars</option>
+    <option value="conference">Conferences</option>
+    <option value="exam">Exams</option>
+    <option value="fees">Fees</option>
+    <option value="cultural">Cultural Events</option>
+    <option value="fest">Main Fest</option>
+    <option value="club">Club Activities</option>
+  </select>
+
+  <label for="description">Description</label>
+  <textarea id="description" placeholder="Write about the event..."></textarea>
+
+  <div id="eventOnly1">
+    <label for="tags">Tags (comma separated - used for recommendations)</label>
+    <input type="text" id="tags" placeholder="python, machine learning, coding">
+
+    <div id="photoBlock">
+      <label for="imageInput" class="upload-box">&#128247; Upload Photos (max 4)</label>
+      <input type="file" id="imageInput" accept="image/*" multiple hidden>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button class="next-btn" id="backHome">&larr; Back</button>
+    <button class="next-btn" id="nextBtn">Next &rarr;</button>
+    <button class="submit-btn hidden" id="postNoticeBtn">Post Notice &#128226;</button>
+  </div>
+</div>
+
+<div id="previewGrid" class="preview-grid"></div>
+</div>
+
+<!-- STEP 2 -->
+<div id="step2" class="hidden">
+
+<h2>&#128197; Event Details</h2>
+
+<label for="location">Location</label>
+<input type="text" id="location" placeholder="e.g. Lab 3, CSE Block">
+
+<label for="startDate">Start</label>
+<input type="datetime-local" id="startDate">
+
+<label for="endDate">End</label>
+<input type="datetime-local" id="endDate">
+
+<label for="capacity">Capacity (0 = unlimited)</label>
+<input type="number" id="capacity" min="0" value="0">
+
+<div class="button-group">
+  <button class="next-btn" id="backStep1">&larr; Back</button>
+  <button class="submit-btn" id="submitBtn">Post Event &#127903;&#65039;</button>
+</div>
+</div>
+
+<p class="error-msg" id="errorMsg"></p>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/add-event.js"></script>
+</body>
+</html>

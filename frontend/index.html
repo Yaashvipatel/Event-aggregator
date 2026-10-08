@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <img src="images/geulogo.png" alt="Logo" class="logo">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="loginStudentId" placeholder="Student Id" required autocomplete="username">
+            <div class="password-box">
+                <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                <span class="toggle-password">Show</span>
+            </div>
+            <button type="submit">Login</button>
+            <p id="loginMessage" class="message"></p>
+            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+        </form>
+    </div>
+    <script src="js/common.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
